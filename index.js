@@ -68,6 +68,7 @@ microcontrollerWss.on('connection', ws => {
       microcontrollerConnections[message.id] = ws;
     }
     if(message.command == 'COMPLETE_BUTTON') {
+      console.log('received complete button signal from '+ microcontrollerConnections[message.productId]);
       // i expect to receive:
       // message.id, message.awb, message.productId, message.quantity;
       receivedIds[message.productId] = 'no';
@@ -94,7 +95,7 @@ microcontrollerWss.on('connection', ws => {
   function getMultipleProducts(awb) {
     let result = {};
     result.awb = awb;
-    result.products = [14, 24];
+    result.products = [0, 3];
     result.quantities = [100, 200];
     return result;
   }
