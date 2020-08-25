@@ -57,7 +57,7 @@ pistolWss.on('connection', ws => {
   ws.send('pong');
 })
 
-const microcontrollerWss = new WebSocket.Server({ port: process.env.PORT_MICRO });
+const microcontrollerWss = new WebSocket.Server({ port: process.env.PORT });
 let microcontrollerConnections = {};
 
 microcontrollerWss.on('connection', ws => {
