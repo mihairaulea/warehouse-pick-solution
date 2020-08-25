@@ -1,17 +1,17 @@
 const WebSocket = require('ws');
 
-// 1. Connect display microcontroller with id 14
-// 2. Connect display microcontroller with id 24 
+// 1. Connect display microcontroller with id 0
+// 2. Connect display microcontroller with id 3 
 // 3. Connect pistol with id 1
 
 // 4. 
 
-// a. send awb 1112 from pistol -- should receive data for both microcontrollers - id 14 should display 100 and id 24 should display 200
+// a. send awb 1112 from pistol -- should receive data for both microcontrollers - id 0 should display 100 and id 3 should display 200
 // b. push complete button on one of the controllers. if it has state variables, send to server the state. the data received should be 'LAST_PRODUCTS'. erase state on the controller.
 // c. push complete button on the 2nd controller. if it has state variables, send to server the state. the data received should be 'OK'. displays 9999 and blinks the led light for 5 seconds
 //    ALWAYS ERASE STATE ON THE DEVICE AFTER A COMPLETE BUTTON PUSH. 
 
-// 6. send awb 1113 from pistol -- should receive data for one microcontroller. id 14 should display 2. id 24 should not display anything. on push button, it should say complete.
+// 6. send awb 1113 from pistol -- should receive data for one microcontroller. id 0 should display 2. id 3 should not display anything. on push button, it should say complete.
 // 7. send awb 0 from pistol -- should receive no data. should be able to send any awb after this.
 
 // TEST SCENARIOS 4, 6, 7 in different orders to confirm no state dependency.
@@ -21,7 +21,7 @@ const WebSocket = require('ws');
 
 // EVICT CONNECTIONS ON DISCONNECT
 // when sending a message to a non-existant id, log it and send sms?
-const pistolWss = new WebSocket.Server({ port: 8080 })
+const pistolWss = new WebSocket.Server({ port: process.env.PORT_PISTOL })
 let pistolConnections = {};
 
 let receivedIds = {};
@@ -57,7 +57,7 @@ pistolWss.on('connection', ws => {
   ws.send('pong');
 })
 
-const microcontrollerWss = new WebSocket.Server({ port: 8081 });
+const microcontrollerWss = new WebSocket.Server({ port: process.env.PORT_MICRO });
 let microcontrollerConnections = {};
 
 microcontrollerWss.on('connection', ws => {
@@ -68,7 +68,7 @@ microcontrollerWss.on('connection', ws => {
       microcontrollerConnections[message.id] = ws;
     }
     if(message.command == 'COMPLETE_BUTTON') {
-      console.log('received complete button signal from '+ microcontrollerConnections[message.productId]);
+      console.log('received complete button signal from ' + message.productId + ' ' + microcontrollerConnections[message.productId]);
       // i expect to receive:
       // message.id, message.awb, message.productId, message.quantity;
       receivedIds[message.productId] = 'no';
@@ -103,8 +103,8 @@ microcontrollerWss.on('connection', ws => {
   function getSingleProduct(awb) {
     let result = {};
     result.awb = awb;
-    result.products = [14];
-    result.quantities = [2];
+    result.products = [0];
+    result.quantities = [192];
     return result;
   }
 
