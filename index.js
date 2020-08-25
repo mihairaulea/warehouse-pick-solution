@@ -1,4 +1,6 @@
 const WebSocket = require('ws');
+const PORT_PISTOL = 8080;
+const PORT_MICRO = 8081;
 
 // 1. Connect display microcontroller with id 0
 // 2. Connect display microcontroller with id 3 
@@ -21,7 +23,7 @@ const WebSocket = require('ws');
 
 // EVICT CONNECTIONS ON DISCONNECT
 // when sending a message to a non-existant id, log it and send sms?
-const pistolWss = new WebSocket.Server({ port: process.env.PORT_PISTOL })
+const pistolWss = new WebSocket.Server({ port: PORT_PISTOL })
 let pistolConnections = {};
 
 let receivedIds = {};
@@ -57,7 +59,7 @@ pistolWss.on('connection', ws => {
   ws.send('pong');
 })
 
-const microcontrollerWss = new WebSocket.Server({ port: process.env.PORT });
+const microcontrollerWss = new WebSocket.Server({ port: PORT_MICRO });
 let microcontrollerConnections = {};
 
 microcontrollerWss.on('connection', ws => {
